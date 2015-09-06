@@ -79,8 +79,8 @@ namespace Orleans.Runtime
 
         private static PerSocketDirectionStats[] perSocketDirectionStatsSend;
         private static PerSocketDirectionStats[] perSocketDirectionStatsReceive;
-        private static ConcurrentDictionary<string, CounterStatistic> perSiloSendCounters;
-        private static ConcurrentDictionary<string, CounterStatistic> perSiloReceiveCounters;
+        internal static ConcurrentDictionary<string, CounterStatistic> perSiloSendCounters;
+        internal static ConcurrentDictionary<string, CounterStatistic> perSiloReceiveCounters;
         private static ConcurrentDictionary<string, CounterStatistic> perSiloPingSendCounters;
         private static ConcurrentDictionary<string, CounterStatistic> perSiloPingReceiveCounters;
         private static ConcurrentDictionary<string, CounterStatistic> perSiloPingReplyReceivedCounters;
