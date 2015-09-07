@@ -159,11 +159,19 @@ namespace Orleans.Runtime
                 case SchedulingContextType.Activation:
                     message.SendingActivation = schedulingContext.Activation.ActivationId;
                     message.SendingGrain = schedulingContext.Activation.Grain;
+                    
+                    // Hack 
+                    message.SendingSilo = schedulingContext.Activation.Silo;
+
                     sendingActivation = schedulingContext.Activation;
                     break;
 
                 case SchedulingContextType.SystemTarget:
                     message.SendingActivation = schedulingContext.SystemTarget.ActivationId;
+                    
+                    // Hack 
+                    message.SendingSilo = schedulingContext.SystemTarget.Silo;
+
                     message.SendingGrain = schedulingContext.SystemTarget.GrainId;
                     break;
             }

@@ -633,6 +633,10 @@ namespace Orleans
             var oneWay = (options & InvokeMethodOptions.OneWay) != 0;
             message.SendingGrain = CurrentActivationAddress.Grain;
             message.SendingActivation = CurrentActivationAddress.Activation;
+
+            // Hack
+            message.SendingSilo = CurrentActivationAddress.Silo;
+
             message.TargetGrain = targetGrainId;
             if (!String.IsNullOrEmpty(genericArguments))
                 message.GenericGrainType = genericArguments;

@@ -621,7 +621,7 @@ namespace Orleans.Runtime.Messaging
                     sendErrorStr = String.Format("Exception sending to client at {0}: {1}", remoteEndpoint, exc);
                     Log.Warn(ErrorCode.GatewayExceptionSendingToClient, sendErrorStr, exc);
                 }
-                MessagingStatisticsGroup.OnMessageSend(msg.TargetSilo, msg.Direction, bytesSent, headerLength, SocketDirection.GatewayToClient);
+                MessagingStatisticsGroup.OnMessageSend(msg.SendingSilo ,msg.TargetSilo, msg.Direction, bytesSent, headerLength, SocketDirection.GatewayToClient);
                 bool sendError = exceptionSending || countMismatchSending;
                 if (sendError)
                 {
@@ -675,7 +675,7 @@ namespace Orleans.Runtime.Messaging
                     Log.Warn(ErrorCode.GatewayExceptionSendingToClient, sendErrorStr, exc);
                 }
 
-                MessagingStatisticsGroup.OnMessageBatchSend(msgs[0].TargetSilo, msgs[0].Direction, bytesSent, headerLengths, SocketDirection.GatewayToClient, msgs.Count);
+                MessagingStatisticsGroup.OnMessageBatchSend(msgs[0].SendingSilo,msgs[0].TargetSilo, msgs[0].Direction, bytesSent, headerLengths, SocketDirection.GatewayToClient, msgs.Count);
                 bool sendError = exceptionSending || countMismatchSending;
                 if (sendError)
                 {

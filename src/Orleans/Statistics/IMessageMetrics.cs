@@ -6,15 +6,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Orleans.Statistics
+namespace Orleans.Runtime
 {
-    public class IMessageMetrics
+    public interface IMessageMetrics
     {
-        long MessageSentTotal { get; set; }
-        long MessageReceiveTotal { get; set; }
-        long LocalMessagesReceived { get; set;  }
-        ConcurrentDictionary<string, long> PerSiloSendCounters { get; set; }
-        ConcurrentDictionary<string, long> PerSiloReceiveCounters { get; set; }
+        long MessageSentTotal { get; }
+        long MessageReceivedTotal { get; }
+        long LocalMessagesReceived { get;  }
+        ConcurrentDictionary<string, long> PerSiloSendCounters { get; }
+        ConcurrentDictionary<string, long> PerSiloReceiveCounters { get; }
+        ConcurrentDictionary<string, long> PerSiloSendToCounters { get; }
+        ConcurrentDictionary<string, long> PerSiloReceiveFromCounters { get; }
+
     }
     public class MessageMetrics : IMessageMetrics
     {
@@ -26,7 +29,7 @@ namespace Orleans.Statistics
             }
         }
 
-        public long MessagesReceived
+        public long MessageReceivedTotal
         {
             get
             {
@@ -62,6 +65,32 @@ namespace Orleans.Statistics
             {
                 var perSiloMsgs = new ConcurrentDictionary<string, long>();
                 foreach (var items in MessagingStatisticsGroup.perSiloReceiveCounters)
+                {
+                    perSiloMsgs[items.Key] = items.Value.GetCurrentValue();
+                }
+                return perSiloMsgs;
+            }
+        }
+
+        public ConcurrentDictionary<string, long> PerSiloSendToCounters
+        {
+            get
+            {
+                var perSiloMsgs = new ConcurrentDictionary<string, long>();
+                foreach (var items in MessagingStatisticsGroup.perSiloSendToCounters)
+                {
+                    perSiloMsgs[items.Key] = items.Value.GetCurrentValue();
+                }
+                return perSiloMsgs;
+            }
+        }
+
+        public ConcurrentDictionary<string, long> PerSiloReceiveFromCounters
+        {
+            get
+            {
+                var perSiloMsgs = new ConcurrentDictionary<string, long>();
+                foreach (var items in MessagingStatisticsGroup.perSiloReceiveFromCounters)
                 {
                     perSiloMsgs[items.Key] = items.Value.GetCurrentValue();
                 }

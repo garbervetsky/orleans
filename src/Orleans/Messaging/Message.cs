@@ -519,6 +519,12 @@ namespace Orleans.Runtime
                 }
             }
 
+            // Hack: Added  SENDING_SILO to header
+            if (this.ContainsHeader(Header.TARGET_SILO))
+            {
+                response.SetHeader(Header.SENDING_SILO, this.GetHeader(Header.TARGET_SILO));
+            }
+
             response.SendingSilo = this.TargetSilo;
             if (this.ContainsHeader(Header.TARGET_GRAIN))
             {

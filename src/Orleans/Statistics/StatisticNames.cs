@@ -65,6 +65,9 @@ namespace Orleans.Runtime
         public static readonly StatisticName NETWORKING_SOCKETS_CLIENTTOGATEWAY_DUPLEX_OPENED    = new StatisticName("Networking.Sockets.ClientToGateway.Duplex.Opened");
 
         // Messaging
+        public static readonly StatisticNameFormat MESSAGING_SENT_MESSAGES_PER_SILO_TO = new StatisticNameFormat("Messaging.Sent.Messages.To.{0}.From.{1}");
+        public static readonly StatisticNameFormat MESSAGING_RECEIVED_MESSAGES_PER_SILO_TO = new StatisticNameFormat("Messaging.Received.Messages.From.{0}.To.{1}");
+
         public static readonly StatisticName MESSAGING_SENT_MESSAGES_TOTAL                  = new StatisticName("Messaging.Sent.Messages.Total");
         public static readonly StatisticNameFormat MESSAGING_SENT_MESSAGES_PER_DIRECTION   = new StatisticNameFormat("Messaging.Sent.Direction.{0}");
         public static readonly StatisticNameFormat MESSAGING_SENT_MESSAGES_PER_SILO        = new StatisticNameFormat("Messaging.Sent.Messages.To.{0}");
@@ -79,6 +82,7 @@ namespace Orleans.Runtime
         public static readonly StatisticName MESSAGING_RECEIVED_MESSAGES_TOTAL                      = new StatisticName("Messaging.Received.Messages.Total");
         public static readonly StatisticNameFormat MESSAGING_RECEIVED_MESSAGES_PER_DIRECTION       = new StatisticNameFormat("Messaging.Received.Direction.{0}");
         public static readonly StatisticNameFormat MESSAGING_RECEIVED_MESSAGES_PER_SILO            = new StatisticNameFormat("Messaging.Received.Messages.From.{0}");
+        
         public static readonly StatisticName MESSAGING_RECEIVED_BYTES_TOTAL                         = new StatisticName("Messaging.Received.Bytes.Total");
         public static readonly StatisticName MESSAGING_RECEIVED_BYTES_HEADER                        = new StatisticName("Messaging.Received.Bytes.Header");
         public static readonly StatisticName MESSAGING_RECEIVED_MESSAGESIZEHISTOGRAM                = new StatisticName("Messaging.Received.MessageSizeHistogram.Bytes");

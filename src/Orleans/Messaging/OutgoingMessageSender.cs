@@ -99,7 +99,7 @@ namespace Orleans.Messaging
                     Log.Warn(ErrorCode.Messaging_ExceptionSending, sendErrorStr, exc);
                 }
             }
-            MessagingStatisticsGroup.OnMessageSend(targetSilo, msg.Direction, bytesSent, headerLength, GetSocketDirection());
+            MessagingStatisticsGroup.OnMessageSend(msg.SendingSilo, targetSilo, msg.Direction, bytesSent, headerLength, GetSocketDirection());
             bool sendError = exceptionSending || countMismatchSending;
             if (sendError)
                 OnSendFailure(sock, targetSilo);
@@ -164,7 +164,7 @@ namespace Orleans.Messaging
                     Log.Warn(ErrorCode.Messaging_ExceptionSending, sendErrorStr, exc);
                 }
             }
-            MessagingStatisticsGroup.OnMessageBatchSend(targetSilo, msgs[0].Direction, bytesSent, headerLength, GetSocketDirection(), msgs.Count);
+            MessagingStatisticsGroup.OnMessageBatchSend(msgs[0].SendingSilo, targetSilo, msgs[0].Direction, bytesSent, headerLength, GetSocketDirection(), msgs.Count);
             bool sendError = exceptionSending || countMismatchSending;
             if (sendError)
                 OnSendFailure(sock, targetSilo);

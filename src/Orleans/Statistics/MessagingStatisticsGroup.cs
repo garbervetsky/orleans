@@ -85,7 +85,10 @@ namespace Orleans.Runtime
         private static ConcurrentDictionary<string, CounterStatistic> perSiloPingReceiveCounters;
         private static ConcurrentDictionary<string, CounterStatistic> perSiloPingReplyReceivedCounters;
         private static ConcurrentDictionary<string, CounterStatistic> perSiloPingReplyMissedCounters;
-                
+
+        internal static ConcurrentDictionary<string, CounterStatistic> perSiloSendToCounters;
+        internal static ConcurrentDictionary<string, CounterStatistic> perSiloReceiveFromCounters;
+
         internal enum Phase
         {
             Send,
@@ -170,31 +173,42 @@ namespace Orleans.Runtime
             perSiloPingReceiveCounters = new ConcurrentDictionary<string, CounterStatistic>();
             perSiloPingReplyReceivedCounters = new ConcurrentDictionary<string, CounterStatistic>();
             perSiloPingReplyMissedCounters = new ConcurrentDictionary<string, CounterStatistic>();
-        }
 
-        internal static void OnMessageSend(SiloAddress targetSilo, Message.Directions direction, int numTotalBytes, int headerBytes, SocketDirection socketDirection)
+            perSiloSendToCounters = new ConcurrentDictionary<string, CounterStatistic>();
+            perSiloReceiveFromCounters = new ConcurrentDictionary<string, CounterStatistic>();
+    }
+
+        internal static void OnMessageSend(SiloAddress sendingSilo, SiloAddress targetSilo, Message.Directions direction, int numTotalBytes, int headerBytes, SocketDirection socketDirection)
         {
             if (numTotalBytes < 0)
                 throw new ArgumentException(String.Format("OnMessageSend(numTotalBytes={0})", numTotalBytes), "numTotalBytes");
-            OnMessageSend_Impl(targetSilo, direction, numTotalBytes, headerBytes, 1);
+            OnMessageSend_Impl(sendingSilo, targetSilo, direction, numTotalBytes, headerBytes, 1);
         }
 
-        internal static void OnMessageBatchSend(SiloAddress targetSilo, Message.Directions direction, int numTotalBytes, int headerBytes, SocketDirection socketDirection, int numMsgsInBatch)
+        internal static void OnMessageBatchSend(SiloAddress sendingSilo, SiloAddress targetSilo, Message.Directions direction, int numTotalBytes, int headerBytes, SocketDirection socketDirection, int numMsgsInBatch)
         {
             if (numTotalBytes < 0)
                 throw new ArgumentException(String.Format("OnMessageBatchSend(numTotalBytes={0})", numTotalBytes), "numTotalBytes");
-            OnMessageSend_Impl(targetSilo, direction, numTotalBytes, headerBytes, numMsgsInBatch);
+            OnMessageSend_Impl(sendingSilo, targetSilo, direction, numTotalBytes, headerBytes, numMsgsInBatch);
             perSocketDirectionStatsSend[(int)socketDirection].OnMessage(numMsgsInBatch, numTotalBytes);
         }
 
-        private static void OnMessageSend_Impl(SiloAddress targetSilo, Message.Directions direction, int numTotalBytes, int headerBytes, int numMsgsInBatch)
+        private static void OnMessageSend_Impl(SiloAddress sendingSilo, SiloAddress targetSilo, Message.Directions direction, int numTotalBytes, int headerBytes, int numMsgsInBatch)
         {
             MessagesSentTotal.IncrementBy(numMsgsInBatch);
             MessagesSentPerDirection[(int)direction].IncrementBy(numMsgsInBatch);
             TotalBytesSent.IncrementBy(numTotalBytes);
             HeaderBytesSent.IncrementBy(headerBytes);
             sentMsgSizeHistogram.AddData(numTotalBytes);
-            FindCounter(perSiloSendCounters, new StatisticName(StatisticNames.MESSAGING_SENT_MESSAGES_PER_SILO, (targetSilo != null ? targetSilo.ToString() : "Null")), CounterStorage.LogOnly).IncrementBy(numMsgsInBatch);
+            FindCounter(perSiloSendCounters, new StatisticName(StatisticNames.MESSAGING_SENT_MESSAGES_PER_SILO,
+                                                                 (targetSilo != null ? targetSilo.ToString() : "Null")), 
+                                                                 CounterStorage.LogOnly).IncrementBy(numMsgsInBatch);
+
+            FindCounter(perSiloSendToCounters, new StatisticName(StatisticNames.MESSAGING_SENT_MESSAGES_PER_SILO_TO, 
+                                                                (targetSilo != null ? targetSilo.ToString() : "Null"),
+                                                                (sendingSilo != null ? sendingSilo.ToString() : "Null")), 
+                                                                CounterStorage.LogOnly).IncrementBy(numMsgsInBatch);
+
         }
 
         private static CounterStatistic FindCounter(ConcurrentDictionary<string, CounterStatistic> counters, StatisticName name, CounterStorage storage)
